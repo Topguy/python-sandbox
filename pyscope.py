@@ -3,29 +3,29 @@ import pygame
 import time
 import random
 
-class pyscope :
-    screen = None;
+class PyScope:
+    screen = None
     
     def __init__(self):
-        "Ininitializes a new pygame screen using the framebuffer"
+        """Initializes a new pygame screen using the framebuffer"""
         # Based on "Python GUI in Linux frame buffer"
-        # http://www.karoltomala.com/blog/?p=679
-        disp_no = os.getenv("DISPLAY")
+        # https://www.karoltomala.com/blog/?p=679
+        disp_no = os.environ.get("DISPLAY")
         if disp_no:
-            print "I'm running under X display = {0}".format(disp_no)
+            print(f"I'm running under X display = {disp_no}")
         
         # Check which frame buffer drivers are available
         # Start with fbcon since directfb hangs with composite output
-        drivers = ['fbcon', 'directfb', 'svgalib']
+        drivers = ['fbcon', 'directfb', 'svgalib','xkb','x11']
         found = False
         for driver in drivers:
             # Make sure that SDL_VIDEODRIVER is set
-            if not os.getenv('SDL_VIDEODRIVER'):
+            if not os.environ.get('SDL_VIDEODRIVER'):
                 os.putenv('SDL_VIDEODRIVER', driver)
             try:
                 pygame.display.init()
             except pygame.error:
-                print 'Driver: {0} failed.'.format(driver)
+                print(f"Driver: {driver} failed.")
                 continue
             found = True
             break
@@ -34,7 +34,7 @@ class pyscope :
             raise Exception('No suitable video driver found!')
         
         size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
-        print "Framebuffer size: %d x %d" % (size[0], size[1])
+        print(f"Framebuffer size: {size[0]} x {size[1]}")
         self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
         # Clear the screen to start
         self.screen.fill((0, 0, 0))        
@@ -44,7 +44,8 @@ class pyscope :
         pygame.display.update()
 
     def __del__(self):
-        "Destructor to make sure pygame shuts down, etc."
+        """Destructor to make sure pygame shuts down, etc."""
+        pygame.quit()
 
     def test(self):
         # Fill the screen with red (255, 0, 0)
@@ -52,9 +53,8 @@ class pyscope :
         self.screen.fill(red)
         # Update the display
         pygame.display.update()
+        time.sleep(3)
 
 # Create an instance of the PyScope class
-scope = pyscope()
+scope = PyScope()
 scope.test()
-time.sleep(10)
-
